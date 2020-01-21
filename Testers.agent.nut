@@ -219,6 +219,8 @@ api.get("/images/([^/]*)", function(context) {
     if (name == "s3.png") image = SIGNAL_3_PNG;
     if (name == "s4.png") image = SIGNAL_4_PNG;
 
+    // Set headers to mark the data as an image, and to cache it
     context.setHeader("Content-Type", "image/png");
+    context.setHeader("Cache-Control", "max-age=86400");
     context.send(200, image);
 });

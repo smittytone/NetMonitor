@@ -430,10 +430,10 @@ webAPI.get("/images/([^/]*)", function(context) {
     if (name == "s3.png") image = SIGNAL_3_PNG;
     if (name == "s4.png") image = SIGNAL_4_PNG;
 
-    // Make sure we let the browser know what kind of data we're sending...
+    // Make sure we let the browser know what kind of data we're sending
+    // and that it should cache the image data
     context.setHeader("Content-Type", "image/png");
-
-    // ...and send it
+    context.setHeader("Cache-Control", "max-age=86400");
     context.send(200, image);
 });
 
