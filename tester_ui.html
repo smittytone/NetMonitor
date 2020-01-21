@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <title>NetTester</title>
+    <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'>
+    <link href='https://fonts.googleapis.com/css?family=Abel|Audiowide' rel='stylesheet'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta charset='UTF-8'>
+    <style>
+        .center { margin-left: auto; margin-right: auto; margin-bottom: auto; margin-top: auto; }
+        body { background-color: #b30000; }
+        p {color: white; font-family: Abel, sans-serif; font-size: 18px;}
+        p.box {margin-top: 2px; margin-bottom: 2px;}
+        p.subhead {color:#ffcc00; font-size: 22px; line-height: 24px; vertical-align: middle;}
+        p.postsubhead {margin-top: 15px;}
+        p.colophon {font-size: 14px; text-align: center;}
+        p.little {font-size: 14px; line-height: 16px; margin-top: 10px;}
+        h2 {color: #ffcc00; font-family: Audiowide, sans-serif; font-weight:bold; font-size: 36px; margin-top: 10px;}
+        h4 {color: white; font-family: Abel, sans-serif; font-weight:bold; font-size: 30px; margin-bottom: 10px;}
+        td {color: white; font-family: Abel, sans-serif;}
+        hr {border-color: #ffcc00;}
+        .uicontent {border: 2px solid #ffcc00;}
+        .container {padding: 20px;}
+        .btn-warning {width: 200px;}
+        .showhidewlans {-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
+                        -moz-user-select: none; -ms-user-select: none; user-select: none; cursor: pointer;
+                        margin-bottom:0px; vertical-align: middle;}
+        .showhidewifi {-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
+                        -moz-user-select: none; -ms-user-select: none; user-select: none; cursor: pointer;
+                        margin-bottom:0px; vertical-align: middle;}
+        .modal {display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%%; height: 100%%; overflow: auto;
+                background-color: rgba(0,0,0,0.4)}
+    .modal-content-ok {background-color: #37ACD1; margin: 10%% auto; padding: 5px;
+                       border: 2px solid #2C8BA9; width: 80%%}
+
+        @media only screen and (max-width: 640px) {
+            .container {padding: 5px;}
+            .uicontent {border: 0px;}
+            .col-1 {max-width: 0%%; flex: 0 0 0%%;}
+            .col-3 {max-width: 0%%; flex: 0 0 0%%;}
+            .col-5 {max-width: 50%%; flex: 0 0 50%%;}
+            .col-6 {max-width: 100%%; flex: 0 0 100%%;}
+            .btn-warning {width: 140px;}
+        }
+    </style>
+</head>
+<body>
+    <!-- Modals -->
+   <div id='notify' class='modal'>
+       <div class='modal-content-ok'>
+           <h3 align='center' style='color: white; font-family: Abel'>Device&nbsp;state&nbsp;changed</h3>
+       </div>
+   </div>
+    <div class='container'>
+        <div class='row uicontent' align='center'>
+            <div class='col'>
+                <!-- Title and Data Readout Row -->
+                <div class='row' align='center'>
+                    <div class='col-3'></div>
+                    <div class='col-6'>
+                        <h2 class='text-center'>Net Monitor</h2>
+                        <h4 id='status' class='text-center'>Device is <span>disconnected</span></h4>
+                        <div class='row' align='center'>
+                            
+                            <div class='col-5'>
+                                <p class='box' align='right'><b>Device IP</b></p>
+                                <p class='box' align='right'><b>WAN IP</b></p>
+                                <p class='box' align='right'><b>Gateway</b></p>
+                                <p class='box' align='right'><b>Netmask</b></p>
+                                <p class='box' align='right'><b>Broadcast IP</b></p>
+                            </div>
+                            <div class='col-5'>
+                                <p class='box' align='left' id='ip'><span>Unknown</span></p>
+                                <p class='box' align='left' id='wip'><span>Unknown</span></p>
+                                <p class='box' align='left' id='gw'><span>Unknown</span></p>
+                                <p class='box' align='left' id='nm'><span>Unknown</span></p align='left'>
+                                <p class='box' align='left' id='bc'><span>Unknown</span></p>
+                            </div>
+                            
+                        </div>
+                        <hr />
+                    </div>
+                    <div class='col-3'></div>
+                </div>
+                <!-- Title and Data Readout Row -->
+                <div class='row' align='center'>
+                    <div class='col-3'></div>
+                    <div class='col-6'>
+                        <h4 class='showhidewlans text-center'>Nearby Networks</h4>
+                        <div class='wlans'>
+                            <p class='network-list text-center'>&nbsp;<br /><span></span></p>
+                            <button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='search-button'>Get</button>
+                        </div>
+                        <hr />
+                    </div>
+                    <div class='col-3'></div>
+                </div>
+                <!-- WiFi Settings Row -->
+                <div class='row' align='left'>
+                    <div class='col-3'></div>
+                    <div class='col-6'>
+                        <h4 class='showhidewifi text-center'>WiFi Settings</h4>
+                        <div class='wifi'>
+                            <form id='name-form'>
+                                <div class='update-button boxcontent'>
+                                    <p class='boxhead'>SSID<br />
+                                    <input id='ssid' style='color:black;height:38px;width:100%%;vertical-align:middle;font-family:Abel;' placeholder='Network name'></input></p>
+                                    <p class='boxhead'>Password<br />
+                                    <input id='pwd' style='color:black;height:38px;width:100%%;vertical-align:middle;font-family:Abel;' placeholder='Network Password' type='password'></input></p>
+                                    <p align='center'><button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='update-button'>Update</button></p>
+                                    <p class='little'>Use with caution: incorrect values will cause the imp to go offline, requiring direct access and BlinkUp to re-apply the correct settings.</p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class='col-3'></div>
+                    <hr />
+                </div>
+                <!-- Colophon Row -->
+                <div class='row'>
+                    <div class='col'>
+                        <p class='colophon'>&nbsp;<br />NetTester &copy; Tony Smith, 2018-20<br /><a href='https://github.com/smittytone/Weather' target='_new'><img src='https://smittytone.github.io/images/rassilon.png' width='32' height='32' /></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+    <script>
+    // Variables
+    var agenturl = '%s';
+    var state = 0;
+    var timer;
+
+    // Hide the WiFi controls
+    $('.wifi').hide();
+
+    // Get initial readings
+    getState(updateReadout);
+
+    // Begin the online status update loop
+    var stateTimer = setInterval(checkState, 20000);
+
+    // Set UI click actions
+    $('.update-button button').click(update);
+    //$('.search-button button').click(wsearch);
+    document.getElementById('search-button').onclick = wsearch;
+
+    // Configure Show/Hide WiFi Settings toggle
+    $('.showhidewifi').click(function() {
+        $('.wifi').toggle();
+    });
+
+    $('.showhidewlans').click(function() {
+        $('.wlans').toggle();
+    });
+
+    // Functions
+    function updateReadout(data) {
+        $('#ssid').val(data.ssid);
+        $('#pwd').val(data.pwd);
+        $('#status span').text(data.state);
+        $('#ip span').text(data.ip);
+        $('#wip span').text(data.wip);
+        $('#gw span').text(data.gw);
+        $('#nm span').text(data.nm);
+        $('#bc span').text(data.bc);
+        
+        let newstate = (data.state == 'connected' ? 1 : 2);
+        
+        // NOTE check for 'state != 0' stops modal appearing on launch
+        if (state !=0 && newstate != state) {
+            state = newstate;
+            setModal();
+        }
+    }
+
+    function getState(callback) {
+        // Request the current data
+        $.ajax({
+            url : agenturl + '/current',
+            type: 'GET',
+            cache: false,
+            success : function(response) {
+                response = JSON.parse(response);
+                if (callback) {
+                    callback(response);
+                }
+            }
+        });
+    }
+
+    function update(e) {
+        // Apply new WiFi settings
+        e.preventDefault();
+        var s = document.getElementById('ssid').value;
+        var p = document.getElementById('pwd').value;
+        $('#name-form').trigger('reset');
+
+        // Trigger a forecast update
+        $.ajax({
+            url : agenturl + '/new',
+            type: 'POST',
+            cache: false,
+            data: JSON.stringify({ 'ssid' : s, 'pwd': p }),
+            success : function(response) {
+                getState(updateReadout);
+            }
+        });
+    }
+
+    function checkState() {
+        // Request the current settings to extract the device's online state
+        // NOTE This is called periodically via a timer (stateTimer)
+        $.ajax({
+            url: agenturl + '/current',
+            type: 'GET',
+            cache: false,
+            success: function(response) {
+                getState(updateReadout);
+            }
+        });
+    }
+
+    function wsearch(e) {
+        $.ajax({
+            url: agenturl + '/list',
+            type: 'GET',
+            cache: false,
+            success: function(response) {
+                var d = JSON.parse(response);
+                showList(d['list'])
+            }
+        });
+    }
+
+    function showList(networks) {
+        // Take the array of alarms sent by the clock and generate a list to present
+        if (networks.length == 0) {
+            // No alarms so just show a simple message
+            $('.network-list span').text('No networks found');
+        } else {
+            // Build an HTML table to show the alarms
+            // NOTE the device will already have ordered these, so the sequene of alarms in the 'alarms' array
+            //      will match the stored sequence held by the device and the agent
+            var h = '<table width=""100%%"" class=""table table-striped table-sm"">';
+            h = h + '<tr><th>SSID</th><th>Channel</th><th>RSSI</th><th>Open?</th></tr>';
+            for (var i = 0 ; i < networks.length ; i++) {
+                let network = networks[i];
+                
+                // Set the signal strength graphic
+                let r = network.rssi;
+                let s = '&nbsp;'
+                if (r > -72) { s = '<img src=""' + agenturl + '/images/s4.png"" width=""16"" />' }
+                if (r < -71 && r > -77) { s = '<img src=""' + agenturl + '/images/s3.png"" width=""16"" />' }
+                if (r < -76 && r > -82) { s = '<img src=""' + agenturl + '/images/s2.png"" width=""16"" />' }
+                if (r < -81 && r > -86) { s = '<img src=""' + agenturl + '/images/s1.png"" width=""16"" />' }
+                
+                // Check for missing SSIDs
+                if (network.ssid == '') { network.ssid = '[HIDDEN]' }
+
+                h = h + '<tr><td width=""50%%"" align=""center"">' + network.ssid + '</td><td width=""20%%"" align=""center"">' + network.channel + '</td><td width=""20%%"" align=""center"">' + s + '</td><td width=""10%%"" align=""center"">' + (network.open ? ' ' : ('<img src=""' + agenturl + '/images/lock.png"" width=""16"" />')) + '</td></tr>';
+            }
+
+            h = h + '</table>';
+            $('.network-list span').html(h);
+            document.getElementById('search-button').textContent = 'Refresh';
+        }
+    }
+    
+    function setModal() {
+        clearTimeout(timer);
+
+        var modal = document.getElementById('notify');
+        modal.style.display = 'block';
+
+        timer = setTimeout(function() {
+            modal.style.display = 'none';
+        }, 6000);
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                clearTimeout(timer);
+                modal.style.display = 'none';
+            }
+        };
+    }
+    </script>
+</body>
+</html>
