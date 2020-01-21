@@ -282,20 +282,13 @@ disconnectionManager <- {
 
 
 /*
- * CONSTANTS
- *
- */
-const TRIAL_TIME = 30;
-
-/*
  * GLOBALS
  *
  */
-local green = hardware.pinC;
-local red = hardware.pinA;
-local yellow = hardware.pinD;
+local green = hardware.pinK;
+local red = hardware.pinN;
+local yellow = hardware.pinB;
 local networks = null;
-local networkIndex = 0;
 local isScanning = false;
 
 /*
@@ -309,8 +302,9 @@ local isScanning = false;
  *   YELLOW - device is attempting to connect
  *   RED - device is disconnected
  */
-green.configure(DIGITAL_OUT, (server.isconnected() ? 1 : 0));
-red.configure(DIGITAL_OUT, (server.isconnected() ? 0 : 1));
+local isConnected = server.isconnected();
+green.configure(DIGITAL_OUT, (isConnected ? 1 : 0));
+red.configure(DIGITAL_OUT, (isConnected ? 0 : 1));
 yellow.configure(DIGITAL_OUT, 0);
 
 // Register the connection state reporting callback
@@ -353,16 +347,6 @@ disconnectionManager.start();
 /*
  * Register handlers for messages sent to the device by its agent
  */
-agent.on("set.wifi.data", function(wifi) {
-    // The agent is relaying new WiFi credentials from the web UI, so apply them
-    // then perform a reboot after ten seconds
-    server.log("Changing WiFi to SSID \'" + wifi.ssid + "\' in 10 seconds");
-    imp.setwificonfiguration(wifi.ssid, wifi.pwd);
-    imp.wakeup(10, function() {
-        imp.reset();
-    });
-});
-
 agent.on("get.wifi.data", function(dummy) {
     // The agent has requested WLAN status information which the web UI will display
     local i = imp.net.info();
@@ -370,10 +354,7 @@ agent.on("get.wifi.data", function(dummy) {
         // Get the active network interface and make sure it's WiFi
         local item = i.interface[i.active];
         if (item.type == "wifi") {
-            // Send the network's SSID
-            agent.send("report.wifi.ssid", item.ssid);
-
-            // And send the network data
+            // Send the network data
             agent.send("send.net.status", i.ipv4);
         }
     }
@@ -384,9 +365,10 @@ agent.on("get.wlan.list", function(dummy) {
     // a new scan if one is not already in progress
     if (!isScanning) {
         isScanning = true;
-        imp.scanwifinetworks(function(networks) {
+        imp.scanwifinetworks(function(wlans) {
             // This callback is triggered when the list has been retrieved
             isScanning = false;
+            networks = wlans;
 
             // Send the retrieved WLAN list to the agent
             agent.send("set.wlan.list", networks);
