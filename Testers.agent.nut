@@ -5,18 +5,24 @@
 #import "~/Documents/GitHub/generic/crashreporter.nut"
 #import "~/OneDrive/Programming/nettester/nettester.nut"
 
+
 // CONSTANTS
 const HTML_STRING = @"
 #import "tester_ui.html"
 ";
 #import "images.nut";
 
+
 // GLOBALS
 local api = null;
 local data = null;
 local wanIP = null;
 local ipdata = null;
-local saveContext = null;
+local networks = null;
+local savedContext = null;
+local sortFunctions = null;
+local sortType = 1;
+
 
 // FUNCTIONS
 function debugAPI(context, next) {
@@ -33,8 +39,35 @@ function checkSecure(context) {
     return true;
 }
 
+function sortSSID(a, b) {
+    if (a.ssid.tolower() < b.ssid.tolower()) return -1;
+    if (a.ssid.tolower() > b.ssid.tolower()) return 1;
+    return 0;
+}
+
+function sortChannel(a, b) {
+    if (a.channel < b.channel) return -1;
+    if (a.channel > b.channel) return 1;
+    return 0;
+}
+
+function sortRSSI(a, b) {
+    if (a.rssi < b.rssi) return -1;
+    if (a.rssi > b.rssi) return 1;
+    return 0;
+}
+
+function sortOpen(a, b) {
+    if (!a.open && b.open) return -1;
+    if (a.open && !b.open) return 1;
+    return 0;
+}
+
 
 // RUNTIME START
+
+// Set sort functions
+sortFunctions = [sortSSID, sortChannel, sortRSSI, sortOpen];
 
 // Load settings
 local loaded = server.load();
@@ -61,10 +94,12 @@ device.on("send.net.status", function(info) {
     ipdata = info;
 });
 
-device.on("set.wlan.list", function(networks) {
-    if (saveContext != null) {
-        saveContext.send(200, http.jsonencode({"list": networks}));
-        saveContext = null;
+device.on("set.wlan.list", function(wlans) {
+    if (savedContext != null) {
+        networks = wlans;
+        networks.sort(sortFunctions[sortType]);
+        savedContext.send(200, http.jsonencode({"list": networks}));
+        savedContext = null;
     }
 });
 
@@ -144,7 +179,31 @@ api.get("/list", function(context) {
     }
 
     device.send("get.wlan.list", true);
-    saveContext = context;
+    savedContext = context;
+});
+
+api.post("/relist", function(context) {
+
+    if (!checkSecure(context)) {
+        context.send(401, "Insecure access forbidden");
+        return;
+    }
+
+    try {
+        local sentData = http.jsondecode(context.req.rawbody);
+        if ("type" in sentData) sortType = sentData.type.tointeger();
+
+        if (networks != null) {
+            networks.sort(sortFunctions[sortType]);
+            context.send(200, http.jsonencode({"list": networks}));
+        } else {
+            device.send("get.wlan.list", true);
+            savedContext = context;
+        }
+    } catch (err) {
+        server.error(err);
+        context.send(400, "Bad data posted");
+    }
 });
 
 // Any call to the endpoint /images is sent the correct PNG data
