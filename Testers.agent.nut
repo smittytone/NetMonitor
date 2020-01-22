@@ -22,6 +22,7 @@ local networks = null;
 local savedContext = null;
 local sortFunctions = null;
 local sortType = 1;
+local sortDirIsAsc = 1;
 
 
 // FUNCTIONS
@@ -40,26 +41,26 @@ function checkSecure(context) {
 }
 
 function sortSSID(a, b) {
-    if (a.ssid.tolower() < b.ssid.tolower()) return -1;
-    if (a.ssid.tolower() > b.ssid.tolower()) return 1;
+    if (a.ssid.tolower() < b.ssid.tolower()) return sortDirIsAsc * -1;
+    if (a.ssid.tolower() > b.ssid.tolower()) return sortDirIsAsc *1;
     return 0;
 }
 
 function sortChannel(a, b) {
-    if (a.channel < b.channel) return -1;
-    if (a.channel > b.channel) return 1;
+    if (a.channel < b.channel) return sortDirIsAsc * -1;
+    if (a.channel > b.channel) return sortDirIsAsc * 1;
     return 0;
 }
 
 function sortRSSI(a, b) {
-    if (a.rssi < b.rssi) return -1;
-    if (a.rssi > b.rssi) return 1;
+    if (a.rssi < b.rssi) return sortDirIsAsc * -1;
+    if (a.rssi > b.rssi) return sortDirIsAsc * 1;
     return 0;
 }
 
 function sortOpen(a, b) {
-    if (!a.open && b.open) return -1;
-    if (a.open && !b.open) return 1;
+    if (!a.open && b.open) return sortDirIsAsc * -1;
+    if (a.open && !b.open) return sortDirIsAsc * 1;
     return 0;
 }
 
@@ -192,6 +193,13 @@ api.post("/relist", function(context) {
     try {
         local sentData = http.jsondecode(context.req.rawbody);
         if ("type" in sentData) sortType = sentData.type.tointeger();
+        if ("flip" in sentData) {
+            // Reverse the sort direction
+            sortDirIsAsc *= -1;
+        } else {
+            // New column selected, so show ascending
+            sortDirIsAsc = 1;
+        }
 
         if (networks != null) {
             networks.sort(sortFunctions[sortType]);

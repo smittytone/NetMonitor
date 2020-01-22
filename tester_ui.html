@@ -131,6 +131,7 @@
     var agenturl = '%s';
     var state = 0;
     var timer;
+    var lastType = 1;
 
     // Hide the WiFi controls
     $('.wifi').hide();
@@ -244,7 +245,7 @@
             // NOTE the device will already have ordered these, so the sequene of alarms in the 'alarms' array
             //      will match the stored sequence held by the device and the agent
             var h = '<table width=""100%%"" class=""table table-striped table-sm"">';
-            h = h + '<tr><th onclick=""sort(0)"">SSID</th><th onclick=""sort(1)"">Channel</th><th onclick=""sort(2)"">RSSI</th><th onclick=""sort(3)"">Open?</th></tr>';
+            h += '<tr><th onclick=""sort(0)"">SSID</th><th onclick=""sort(1)"">Channel</th><th onclick=""sort(2)"">RSSI</th><th onclick=""sort(3)"">Open?</th></tr>';
             for (var i = 0 ; i < networks.length ; i++) {
                 let network = networks[i];
 
@@ -259,20 +260,23 @@
                 // Check for missing SSIDs
                 if (network.ssid == '') { network.ssid = '[HIDDEN]' }
 
-                h = h + '<tr><td width=""50%%"" align=""center"">' + network.ssid + '</td><td width=""20%%"" align=""center"">' + network.channel + '</td><td width=""20%%"" align=""center"">' + s + '</td><td width=""10%%"" align=""center"">' + (network.open ? ' ' : ('<img src=""' + agenturl + '/images/lock.png"" width=""16"" />')) + '</td></tr>';
+                h += '<tr><td width=""50%%"" align=""center"">' + network.ssid + '</td><td width=""20%%"" align=""center"">' + network.channel + '</td><td width=""20%%"" align=""center"">' + s + '</td><td width=""10%%"" align=""center"">' + (network.open ? ' ' : ('<img src=""' + agenturl + '/images/lock.png"" width=""16"" />')) + '</td></tr>';
             }
 
-            h = h + '</table><p><small>Click on a column header to sort</small></p>';
+            h += '</table><p><small>Click on a column header to sort. Click again to flip the sort direction.</small></p>';
             $('.network-list span').html(h);
             document.getElementById('search-button').textContent = 'Refresh';
         }
     }
 
     function sort(type) {
+        var data = {'type': type};
+        if (type == lastType) { data.flip = 'flip'; }
+        lastType = type;
         $.ajax({
             url: agenturl + '/relist',
             type: 'POST',
-            data: JSON.stringify({'type': type }),
+            data: JSON.stringify(data),
             cache: false,
             success: function(response) {
                 var d = JSON.parse(response);
