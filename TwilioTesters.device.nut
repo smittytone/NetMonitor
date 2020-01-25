@@ -280,16 +280,39 @@ disconnectionManager <- {
     }
 }
 
-
 /*
  * GLOBALS
  *
  */
-local green = hardware.pinK;
-local red = hardware.pinN;
-local yellow = hardware.pinB;
+local green = null;
+local red = null;
+local yellow = null;
 local networks = null;
 local isScanning = false;
+
+
+/*
+ * FUNCTIONS
+ *
+ */
+
+function setPins(type) {
+    // Select LED pins based on imp type
+    // Update as required for your hardware
+    switch (type) {
+        case "imp003":
+            green = hardware.pinD;
+            red = hardware.pinR;
+            yellow = hardware.pinS;
+            break;
+        default:
+            // imp004m
+            green = hardware.pinK;
+            red = hardware.pinN;
+            yellow = hardware.pinB;
+    }
+}
+
 
 /*
  * RUNTIME START
@@ -303,6 +326,7 @@ local isScanning = false;
  *   RED - device is disconnected
  */
 local isConnected = server.isconnected();
+setPins(imp.info().type);
 green.configure(DIGITAL_OUT, (isConnected ? 1 : 0));
 red.configure(DIGITAL_OUT, (isConnected ? 0 : 1));
 yellow.configure(DIGITAL_OUT, 0);
