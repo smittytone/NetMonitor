@@ -313,7 +313,7 @@ api.post("/relist", function(context) {
             sortDirIsAsc = 1;
         }
 
-        if (networks != null) {
+        if (data.networks != null) {
             // Apply the sort instruction and re-send the list data for display
             data.networks.sort(sortFunctions[sortColumn]);
             context.send(200, http.jsonencode({"list": data.networks}));
