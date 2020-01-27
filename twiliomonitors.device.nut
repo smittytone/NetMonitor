@@ -299,11 +299,17 @@ local isScanning = false;
 function setPins(type) {
     // Select LED pins based on imp type
     // Update as required for your hardware
+    server.log(type);
     switch (type) {
         case "imp003":
             green = hardware.pinD;
             red = hardware.pinR;
             yellow = hardware.pinS;
+
+            // Configure the LED GND pins (if required)
+            hardware.pinC.configure(DIGITAL_OUT, 0);
+            hardware.pinU.configure(DIGITAL_OUT, 0);
+            hardware.pinT.configure(DIGITAL_OUT, 0);
             break;
         default:
             // imp004m
@@ -326,6 +332,7 @@ function setPins(type) {
  *   RED - device is disconnected
  */
 local isConnected = server.isconnected();
+
 setPins(imp.info().type);
 green.configure(DIGITAL_OUT, (isConnected ? 1 : 0));
 red.configure(DIGITAL_OUT, (isConnected ? 0 : 1));
