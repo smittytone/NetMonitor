@@ -348,3 +348,21 @@ api.get("/images/([^/]*)", function(context) {
     context.setHeader("Cache-Control", "max-age=86400");
     context.send(200, image);
 });
+
+api.post("/slack", function(context) {
+    local data = context.req.body;
+    if ("challenge" in data) {
+        if ("type" in data) {
+            if (data.type == "url_verification") {
+                context.setHeader("Content-Type", "text/plain");
+                context.send(200, data.challenge);
+            }
+        }
+    } else {
+        context.send(200, "OK");
+    }
+
+    if ("event" in data) {
+        server.log("Event received");
+    }
+});

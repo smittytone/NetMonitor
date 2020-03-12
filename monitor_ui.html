@@ -137,8 +137,8 @@
     var timer;
     var lastType = 1;
     var warningTimeout;
-    var warningBox = document.createElement("div");
-    warningBox.className = "warning";
+    var warningBox = document.createElement('div');
+    warningBox.className = 'warning';
 
     // Hide the WiFi controls
     $('.wifi').hide();
@@ -204,7 +204,7 @@
         var s = document.getElementById('ssid').value;
         var p = document.getElementById('pwd').value;
         if (s.length == 0) {
-            displayWarning("You must enter an SSID");
+            displayWarning('You must enter an SSID');
         }
         //$('#name-form').trigger('reset');
 
