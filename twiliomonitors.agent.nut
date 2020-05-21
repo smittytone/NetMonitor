@@ -17,7 +17,7 @@ const HTML_STRING = @"
 <html lang='en'>
 <head>
     <title>NetTester</title>
-    <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'>
     <link href='https://fonts.googleapis.com/css?family=Abel|Audiowide' rel='stylesheet'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta charset='UTF-8'>
@@ -112,7 +112,7 @@ const HTML_STRING = @"
         </div>
     </div>
 
-    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js'></script>
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
     <script>
     // Variables
     var agenturl = '%s';

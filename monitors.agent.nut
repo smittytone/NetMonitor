@@ -9,8 +9,8 @@
 // If you are not using Squinter or a similar tool,
 // please paste the code from the named files in place
 // of the relevant import statement
-#import "~/Documents/GitHub/generic/simpleslack.nut"        // See https://github.com/smittytone/generic
-#import "~/Documents/GitHub/generic/crashreporter.nut"      // See https://github.com/smittytone/generic
+#import "../generic-squirrel/simpleslack.nut"        // See https://github.com/smittytone/generic-squirrel
+#import "../generic-squirrel/crashreporter.nut"      // See https://github.com/smittytone/generic-squirrel
 
 // Crash reporting
 // Uncomment the next two lines and complete with your own data

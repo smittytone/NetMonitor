@@ -1,4 +1,4 @@
-# NetMonitor 1.0.0 #
+# NetMonitor 1.0.1 #
 
 This is a simple network status monitor based on the Electric Imp Platform. It gives you an at-a-glance check if your wireless network and broadband connection are up and running. This can be handy when someone at home yells at you: “Why can’t my `insert device type` connect to the Internet?!?!”.
 
@@ -46,6 +46,10 @@ The primary app is embodied in the Squirrel files `monitors.device.nut` and `mon
 
 ## Release Notes ##
 
+- 1.0.1 *21 May 2020*
+    - Update Jquery to 3.5.x.
+    - Update Bootstrap to 4.5.x.
+    - Update included repo names.
 - 1.0.0 *26 February 2020*
     - Initial public release.
 

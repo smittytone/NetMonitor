@@ -7,9 +7,9 @@
 // If you are not using Squinter or a similar tool,
 // please paste the code from the named files in place
 // of the relevant import statement
-#import "~/documents/github/generic/utilities.nut"      // See https://github.com/smittytone/generic
-#import "~/documents/github/generic/seriallog.nut"      // See https://github.com/smittytone/generic
-#import "~/documents/github/generic/disconnect.nut"     // See https://github.com/smittytone/generic
+#import "../generic-squirrel/utilities.nut"      // See https://github.com/smittytone/generic-squirrel
+#import "../generic-squirrel/seriallog.nut"      // See https://github.com/smittytone/generic-squirrel
+#import "../generic-squirrel/disconnect.nut"     // See https://github.com/smittytone/generic-squirrel
 
 /*
  * CONSTANTS
@@ -40,7 +40,7 @@ local yellow = hardware.pinD;
 seriallog.configure(hardware.uart12, 115200, 160, true);
 
 // Display the boot message
-#import "~/documents/github/generic/bootmessage.nut"
+#import "../generic-squirrel/bootmessage.nut"
 
 // Configure the traffic-light LEDs:
 //    GREEN - Connected
