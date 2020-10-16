@@ -103,7 +103,7 @@ agent.on("get.wifi.data", function(dummy) {
     foreach (index, item in i.interface) {
         if (item.type == "wifi" && "active" in i && i.active == index) {
             // Update the stored SSID and then send the network info
-            agent.send("report.wifi.ssid", item.ssid);
+            agent.send("report.wifi.ssid", [item.ssid, item.macaddress]);
             agent.send("send.net.status", i.ipv4);
         }
     }
@@ -124,3 +124,10 @@ agent.on("get.wlan.list", function(dummy) {
         }.bindenv(this));
     }
 }.bindenv(this));
+
+agent.on("do.reset", function(dummy) {
+    server.log("Net Monitor restarting in 5 seconds...");
+    imp.wakeup(5.0, function() {
+        imp.reset();
+    });
+});

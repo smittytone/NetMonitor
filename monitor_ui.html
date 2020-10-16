@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-    <title>NetTester</title>
+    <title>Net Monitor</title>
     <link rel='stylesheet' href='https://netdna.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'>
     <link href='https://fonts.googleapis.com/css?family=Abel|Audiowide' rel='stylesheet'>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <meta charset='UTF-8'>
     <style>
+        body {background:#333333}
         .center { margin-left: auto; margin-right: auto; margin-bottom: auto; margin-top: auto; }
-        body { background-color: #b30000; }
-        p {color: white; font-family: Abel, sans-serif; font-size: 18px;}
+        p {color:white;font-family: Abel, sans-serif; font-size: 18px;}
         p.box {margin-top: 2px; margin-bottom: 2px;}
         p.subhead {color:#ffcc00; font-size: 22px; line-height: 24px; vertical-align: middle;}
         p.postsubhead {margin-top: 15px;}
-        p.colophon {font-size: 14px; text-align: center;}
-        p.little {font-size: 14px; line-height: 16px; margin-top: 10px;}
+        p.colophon {font-size: 0.85rem; text-align: center;padding-top: 10px;}
+        p.little {font-size: 0.85rem; line-height: 1.0rem; margin-top: 10px;}
         h2 {color: #ffcc00; font-family: Audiowide, sans-serif; font-weight:bold; font-size: 36px; margin-top: 10px;}
-        h4 {color: white; font-family: Abel, sans-serif; font-weight:bold; font-size: 30px; margin-bottom: 10px;}
-        td {color: white; font-family: Abel, sans-serif;}
-        tr {color: white; font-family: Abel, sans-serif;}
+        h4 {color:white;font-family: Abel, sans-serif; font-weight:bold; font-size: 1.6rem; margin-bottom: 10px;padding-top: 10px;}
+        td {color:white;font-family: Abel, sans-serif;}
+        tr {color:white;font-family: Abel, sans-serif;}
         hr {border-color: #ffcc00;}
-        .uicontent {border: 2px solid #ffcc00;}
-        .container {padding: 20px;overflow-x: hidden;}
+        .container {padding-top: 20px; padding-left:20px;padding-right:20px;overflow-x: hidden;}
         .btn-warning {width: 200px;}
         th {-webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none;
                         -moz-user-select: none; -ms-user-select: none; user-select: none; cursor: pointer;
@@ -42,9 +41,8 @@
 
         @media only screen and (max-width: 640px) {
             .container {padding: 0px;}
-            .uicontent {border: 0px;}
-            .col-2 {max-width: 0%%; flex: 0 0 0%%;}
-            .col-8 {max-width: 100%%; flex: 0 0 100%%;}
+            .col-1 {max-width: 1%%; flex: 0 0 0%%;}
+            .col-10 {max-width: 98%%; flex: 0 0 100%%;}
             .btn-warning {width: 140px;}
         }
     </style>
@@ -57,51 +55,48 @@
        </div>
    </div>
     <div class='container'>
-        <div class='row uicontent' align='center'>
+        <div class='row' align='center'>
             <div class='col'>
                 <!-- Title and Data Readout Row -->
                 <div class='row' align='center'>
-                    <div class='col-2'></div>
-                    <div class='col-8'>
+                    <div class='col-1'></div>
+                    <div class='col-10' style='border: 2px solid #ffcc00; border-radius: 8px;'>
                         <h2 class='text-center'>Net Monitor</h2>
-                        <h4 id='status' class='text-center'>Device is <span>disconnected</span></h4>
-                        <div class='row' align='center'>
-                            <div class='col-6'>
-                                <p class='box' align='right'><b>Device IP</b></p>
-                                <p class='box' align='right'><b>Browser WAN IP</b></p>
-                                <p class='box' align='right'><b>Gateway</b></p>
-                                <p class='box' align='right'><b>Netmask</b></p>
-                                <p class='box' align='right'><b>Broadcast IP</b></p>
+                        <h4 id='status' class='text-center'>Monitor is <span>disconnected</span></h4>
+                        <div class='row'>
+                            <div class='col-6' style='text-align: left;'>
+                                <p class='box' id='ip'><b>Monitor IP</b> <span>Unknown</span></p>
+                                <p class='box' id='mac'><b>Monitor MAC</b> <span>??</span></p>
+                                <p class='box' id='wip'><b>Browser WAN IP</b> <span>Unknown</span></p>
                             </div>
-                            <div class='col-6'>
-                                <p class='box' align='left' id='ip'><span>Unknown</span></p>
-                                <p class='box' align='left' id='wip'><span>Unknown</span></p>
-                                <p class='box' align='left' id='gw'><span>Unknown</span></p>
-                                <p class='box' align='left' id='nm'><span>Unknown</span></p align='left'>
-                                <p class='box' align='left' id='bc'><span>Unknown</span></p>
+                            <div class='col-6' style='text-align: left;'>
+                                <p class='box' id='gw'><b>Gateway</b> <span>Unknown</span></p>
+                                <p class='box' id='nm'><b>Netmask</b> <span>Unknown</span></p>
+                                <p class='box' id='bc'><b>Broadcast IP</b> <span>Unknown</span></p>
                             </div>
                         </div>
-                        <hr />
+                        <p style='padding-top:20px;'><button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='reset-button'>Reset Monitor</button></p>
                     </div>
-                    <div class='col-2'></div>
+                    <div class='col-1'></div>
                 </div>
+                <br />
                 <!-- Title and Data Readout Row -->
                 <div class='row' align='center'>
-                    <div class='col-2'></div>
-                    <div class='col-8'>
+                    <div class='col-1'></div>
+                    <div class='col-10' style='border: 2px solid #ffcc00; border-radius: 8px;'>
                         <h4 class='showhidewlans text-center'>Nearby Networks</h4>
                         <div class='wlans'>
                             <p class='network-list text-center'>&nbsp;<br /><span></span></p>
-                            <button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='search-button'>Get</button>
+                            <p><button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='search-button'>Scan for Networks</button></p>
                         </div>
-                        <hr />
                     </div>
-                    <div class='col-2'></div>
+                    <div class='col-1'></div>
                 </div>
+                <br />
                 <!-- WiFi Settings Row -->
                 <div class='row' align='left'>
-                    <div class='col-2'></div>
-                    <div class='col-8'>
+                    <div class='col-1'></div>
+                    <div class='col-10' style='border: 2px solid #ffcc00; border-radius: 8px;'>
                         <h4 class='showhidewifi text-center'>WiFi Settings</h4>
                         <div class='wifi'>
                             <form id='name-form'>
@@ -110,21 +105,23 @@
                                     <input id='ssid' style='color:black;height:38px;width:100%%;vertical-align:middle;font-family:Abel;' placeholder='Network name'></input></p>
                                     <p class='boxhead'>Password<br />
                                     <input id='pwd' style='color:black;height:38px;width:100%%;vertical-align:middle;font-family:Abel;' placeholder='Network Password' type='password'></input></p>
-                                    <p align='center'><button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='update-button'>Update</button></p>
+                                    <p align='center'><button class='btn btn-warning' style='vertical-align:middle;font-family:Abel;' type='submit' id='update-button'>Update Settings</button></p>
                                     <p class='little'>Use with caution: incorrect values will cause the imp to go offline, requiring direct access and BlinkUp to re-apply the correct settings.</p>
                                 </div>
                             </form>
                         </div>
-                        <hr />
                     </div>
-                    <div class='col-2'></div>
-                    <hr />
+                    <div class='col-1'></div>
                 </div>
                 <!-- Colophon Row -->
+                <br />
                 <div class='row'>
-                    <div class='col'>
-                        <p class='colophon'>&nbsp;<br />NetTester &copy; Tony Smith, 2020<br /><a href='https://github.com/smittytone/NetMonitor' target='_new'><img src='https://smittytone.net/images/rassilon.png' width='32' height='32' /></a></p>
+                    <div class='col-1'></div>
+                    <div class='col-10' style='border: 2px solid #ffcc00; border-radius: 8px;'>
+                        <p class='colophon'><a href='https://github.com/smittytone/NetMonitor' target='_new'><img src='https://smittytone.net/images/rassilon.png' width='32' height='32' /></a></p>
+                        <p class='colophon' style='margin-top: -16px;'>Net Monitor &copy; 2020, Tony Smith</p>
                     </div>
+                    <div class='col-1'></div>
                 </div>
             </div>
         </div>
@@ -144,16 +141,11 @@
     // Hide the WiFi controls
     $('.wifi').hide();
 
-    // Get initial readings
-    getState(updateReadout);
-
-    // Begin the online status update loop
-    var stateTimer = setInterval(checkState, 20000);
-
     // Set UI click actions
     $('.update-button button').click(update);
     //$('.search-button button').click(wsearch);
     document.getElementById('search-button').onclick = wsearch;
+    document.getElementById('reset-button').onclick = doReset;
 
     // Configure Show/Hide WiFi Settings toggle
     $('.showhidewifi').click(function() {
@@ -163,6 +155,12 @@
     $('.showhidewlans').click(function() {
         $('.wlans').toggle();
     });
+
+    // Get initial readings
+    getState(updateReadout);
+
+    // Begin the online status update loop
+    var stateTimer = setInterval(checkState, 20000);
 
     // Functions
     function updateReadout(data) {
@@ -174,6 +172,7 @@
         $('#gw span').text(data.gw);
         $('#nm span').text(data.nm);
         $('#bc span').text(data.bc);
+        $('#mac span').text(data.mc);
 
         let newstate = (data.state == 'connected' ? 1 : 2);
 
@@ -196,6 +195,14 @@
                     callback(response);
                 }
             }
+        });
+    }
+
+    function doReset() {
+        $.ajax({
+            url: agenturl + '/reset',
+            type: 'GET',
+            cache: false
         });
     }
 
@@ -234,7 +241,7 @@
         });
     }
 
-    function wsearch(e) {
+    function wsearch() {
         $.ajax({
             url: agenturl + '/list',
             type: 'GET',
@@ -271,12 +278,12 @@
                 // Check for missing SSIDs
                 if (network.ssid == '') { network.ssid = '[HIDDEN]' }
 
-                h += '<tr><td width=""50%%"" align=""center"">' + network.ssid + '</td><td width=""20%%"" align=""center"">' + network.channel + '</td><td width=""20%%"" align=""center"">' + s + '</td><td width=""10%%"" align=""center"">' + (network.open ? ' ' : ('<img src=""' + agenturl + '/images/lock.png"" width=""16"" />')) + '</td></tr>';
+                h += '<tr><td width=""40%%"" align=""left"">' + network.ssid + '</td><td width=""20%%"" align=""center"">' + network.channel + '</td><td width=""20%%"" align=""center"">' + s + '</td><td width=""20%%"" align=""center"">' + (network.open ? ' ' : ('<img src=""' + agenturl + '/images/lock.png"" width=""16"" />')) + '</td></tr>';
             }
 
             h += '</table><p><small>Click on a column header to sort. Click again to flip the sort direction.</small></p>';
             $('.network-list span').html(h);
-            document.getElementById('search-button').textContent = 'Refresh';
+            document.getElementById('search-button').textContent = 'Refresh List';
         }
     }
 

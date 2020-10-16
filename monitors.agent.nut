@@ -161,15 +161,16 @@ local loaded = server.load();
 
 if (loaded.len() != 0) {
     data.wifi = loaded;
+    if (!("mac" in data.wifi)) data.wifi.mac <- "Unknown";
 } else {
-    // No stored data; ask the device for the SSID and
-    // initialize the store
-    imp.wakeup(10, function() {
-        device.send("get.wifi.data", true);
-    });
-
-    data.wifi = { "ssid": "", "pwd": "" };
+    data.wifi = { "ssid": "", "pwd": "", "mac": "Unknown" };
 }
+
+// No stored data; ask the device for the SSID and
+// initialize the store
+imp.wakeup(10, function() {
+    device.send("get.wifi.data", true);
+});
 
 /*
  * Message handlers
@@ -177,7 +178,8 @@ if (loaded.len() != 0) {
 
 // Store the device's SSID when it is reported
 device.on("report.wifi.ssid", function(value) {
-    data.wifi.ssid = value;
+    data.wifi.ssid = value[0];
+    data.wifi.mac = value[1];
     server.save(data.wifi);
     server.log("SSID set from device");
 });
@@ -211,6 +213,12 @@ api.get("/", function(context) {
     context.send(200, format(HTML_STRING, http.agenturl()));
 });
 
+// GET at /reset triggers a device reset
+api.get("/reset", function(context) {
+    context.send(200, "OK");
+    device.send("do.reset", true);
+});
+
 // GET at /current returns the current data
 api.get("/current", function(context) {
     // Check for HTTPS
@@ -220,6 +228,7 @@ api.get("/current", function(context) {
     local sendData = {};
     sendData.ssid <- data.wifi.ssid;
     sendData.pwd <- data.wifi.pwd;
+    sendData.mc <- data.wifi.mac;
     sendData.state <- device.isconnected() ? "connected" : "disconnected";
 
     if (data.network.len() != 0) {
@@ -228,6 +237,7 @@ api.get("/current", function(context) {
         sendData.bc <- data.network.broadcast;
         sendData.nm <- data.network.netmask;
         sendData.gw <- data.network.gateway;
+        sendData.dh <- data.network.dhcpserver;
 
         // Add the WAN IP address, as viewed by the client
         // NOTE For this to be meaningful, the client has to be on
