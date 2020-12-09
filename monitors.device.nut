@@ -30,7 +30,6 @@ local green = hardware.pinC;
 local red = hardware.pinA;
 local yellow = hardware.pinD;
 
-
 /*
  * RUNTIME START
  *
